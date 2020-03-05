@@ -1,11 +1,15 @@
 // import Auth from "@aws-amplify/auth";
 // import Amplify from "@aws-amplify/core";
-import firebase from 'firebase'
 // import db from '../firestore'
 
 // const Logger = Amplify.Logger;
 // Logger.LOG_LEVEL = "DEBUG"; // to show detailed logs from Amplify library
 // const logger = new Logger("store:auth");
+import * as firebase from "firebase/app";
+
+// Add the Firebase services that you want to use
+import "firebase/auth";
+import "firebase/firestore";
 
 // initial state
 const state = {
@@ -55,45 +59,59 @@ const actions = {
     context.commit("clearAuthenticationStatus", null);
   },
   signIn: async (context, params) => {
-    console.log(params,"params");
+    console.log(params, "params");
     // logger.debug("{}로 회원가입", params.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
-    try { 
-      // const user = await Auth.signIn(params.username, params.password);
-      // context.commit("setUserAuthenticated", user);
+    try {
+      const user = await firebase.auth().signInWithEmailAndPassword(params.email, params.password);
+      if (user.user.emailVerified) {
+        context.commit("setUserAuthenticated", user);
+      } else {
+        const err = { message: "이메일 승인 안됨" }
+        context.commit("auth/setAuthenticationError", err, { root: true });
+      }
+      console.log(user.user.emailVerified, "이메일 승인")
+
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
   signOut: async context => {
-    try {
-      // await Auth.signOut();
-    } catch (err) {
-      // logger.error("{}로 로그아웃 도중 에러", err);
-      console.error(err,"err");
-    }
+    firebase.auth().signOut().then(function () {
+      // Sign-out successful.
+    }).catch(function (error) {
+      // An error happened.
+      console.error(error, "error");
+    });
     context.commit("auth/clearAuthentication", null, { root: true });
   },
   signUp: async (context, params) => {
-    console.log(params.username,"params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
-    const email = toString(params.email);
-    const password = toString(params.password);
-    console.log(email, password ,"비번메일");
+    var user = null;
     try {
-      firebase.auth().createUserWithEmailAndPassword(params.email, params.password).then(user =>{
-        console.log(user);
+      firebase.auth().createUserWithEmailAndPassword(params.attributes.email, params.password).then(function () {
+        // console.log(user,"기존유저");
+        user = firebase.auth().currentUser;
+        console.log(user, "user")
+        user.sendEmailVerification();
       })
-      .catch(err => {
-        console.error(err, 'err')
-      });
+        .then(function () {
+          user.updateProfile({
+            displayName: params.username,
+            // photoURL: photoURL
+          });
+        })
+        .catch(err => {
+          context.commit("auth/setAuthenticationError", err, { root: true });
+          console.error(err, 'err')
+        });
       context.commit("auth/clearAuthentication", null, { root: true });
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
   confirmSignUp: async (context, params) => {
-    console.log(params,"params");
+    console.log(params, "params");
     // logger.debug("{}로 로그인 승인", params.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
@@ -103,7 +121,7 @@ const actions = {
     }
   },
   confirmResend: async (context, params) => {
-    console.log(params,"params");
+    console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       // await Auth.resendSignUp(params.username);
@@ -112,46 +130,57 @@ const actions = {
     }
   },
   passwordReset: async (context, params) => {
-    console.log(params,"params");
+    console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
+      firebase.auth().sendPasswordResetEmail(params.email).then(function () {
+        // Email sent.
+      }).catch(function (error) {
+        context.commit("auth/setAuthenticationError", error, { root: true });
+        // An error happened.
+      });
       // await Auth.forgotPassword(params.username);
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
   confirmPasswordReset: async (context, params) => {
-    console.log(params,"params");
+    console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       // await Auth.forgotPasswordSubmit(
-        // params.username,
-        // params.code,
-        // params.password
+      // params.username,
+      // params.code,
+      // params.password
       // );
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
   passwordResetResend: async (context, params) => {
-    console.log(params,"params");
+    console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
-      // await Auth.passwordResetResend(params.username);
+      firebase.auth().sendPasswordResetEmail(params.email).then(function () {
+        // Email sent.
+      }).catch(function (error) {
+        context.commit("auth/setAuthenticationError", error, { root: true });
+        // An error happened.
+      });
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
   passwordChange: async (context, params) => {
-    console.log(params,"params");
+    console.log(params, "params");
     // logger.debug("{}의 비밀번호 변경", context.state.user.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       // const user = await Auth.currentAuthenticatedUser();
       // await Auth.changePassword(
-        // user,
-        // params.currentPassword,
-        // params.newPassword
+      // user,
+      // params.currentPassword,
+      // params.newPassword
       // );
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
@@ -164,5 +193,6 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
+  strict: false,
 };

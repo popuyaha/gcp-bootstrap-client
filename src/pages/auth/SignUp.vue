@@ -12,10 +12,10 @@
                 type="text"
                 v-model="username"
                 required
-                placeholder="사용자 ID(Email을 적어주세요)"
+                placeholder="사용자 ID"
               />
             </b-form-group>
-            <b-form-group label="이름" label-for="nameInput">
+            <!-- <b-form-group label="이름" label-for="nameInput">
               <b-form-input
                 id="nameInput"
                 type="text"
@@ -23,7 +23,7 @@
                 required
                 placeholder="이름을 적어주세요"
               />
-            </b-form-group>
+            </b-form-group> -->
             <b-form-group label="Email" label-for="emailInput">
               <b-form-input
                 id="emailInput"
@@ -98,7 +98,8 @@ export default {
       });
 
       if (!this.hasAuthenticationStatus) {
-        router.push("confirmSignUp");
+        // router.push("confirmSignUp");
+        router.push("signIn");
       }
     }
   }

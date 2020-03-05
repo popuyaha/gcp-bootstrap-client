@@ -6,11 +6,11 @@
           <h2>비밀번호 초기화</h2>
           <p>초기화 비밀번호는 Email로 전송됩니다.</p>
           <b-form @submit.prevent="passwordReset">
-            <b-form-group label="사용자 ID" label-for="usernameInput">
+            <b-form-group label="사용자 Email" label-for="usernameInput">
               <b-form-input
                 id="usernameInput"
                 type="text"
-                v-model="username"
+                v-model="email"
                 required
                 autofocus
                 placeholder="사용자 ID(Email을 적어주세요)"
@@ -43,7 +43,7 @@ Vue.component("v-alert", Alert);
 export default {
   data() {
     return {
-      username: ""
+      email: ""
     };
   },
   computed: {
@@ -52,7 +52,7 @@ export default {
   methods: {
     async passwordReset() {
       await store.dispatch("auth/passwordReset", {
-        username: this.username
+        email: this.email
       });
       if (!this.hasAuthenticationStatus) {
         router.push("confirmPasswordReset");

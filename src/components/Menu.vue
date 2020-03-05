@@ -15,7 +15,7 @@
       <b-nav-item-dropdown v-if="isAuthenticated" right>
         <template slot="button-content">
           <v-icon name="regular/user-circle" /><strong class="nav-username">{{
-            user.attributes.name
+            user.user.displayName
           }}</strong>
         </template>
         <b-row class="justify-content-md-center" style="margin:5px">

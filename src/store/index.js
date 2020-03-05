@@ -7,13 +7,14 @@ Vue.use(Vuex);
 // Modules
 import auth from "./modules/auth";
 
-const debug = process.env.NODE_ENV !== "production";
+// const debug = process.env.NODE_ENV !== "production";
 
 const store = new Vuex.Store({
   modules: {
     auth
   },
-  strict: debug,
+  // strict: debug,
+  strict: false,
   plugins: [
     createPersist({
       namespace: "Mlog",

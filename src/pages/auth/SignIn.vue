@@ -68,7 +68,7 @@ export default {
   methods: {
     async signIn() {
       await store.dispatch("auth/signIn", {
-        username: this.email,
+        email: this.email,
         password: this.pass
       });
 
