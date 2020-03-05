@@ -1,7 +1,6 @@
 // import Auth from "@aws-amplify/auth";
 // import Amplify from "@aws-amplify/core";
 import firebase from 'firebase'
-import config from '@/config'
 // import db from '../firestore'
 
 // const Logger = Amplify.Logger;
@@ -14,8 +13,6 @@ const state = {
   isAuthenticated: false,
   authenticationStatus: null
 };
-console.log(config,"컨피그")
-firebase.initializeApp(config.config);
 
 const getters = {
   authenticatedUser: state => state.user,
@@ -80,6 +77,9 @@ const actions = {
   signUp: async (context, params) => {
     console.log(params.username,"params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
+    const email = toString(params.email);
+    const password = toString(params.password);
+    console.log(email, password ,"비번메일");
     try {
       firebase.auth().createUserWithEmailAndPassword(params.email, params.password).then(user =>{
         console.log(user);
