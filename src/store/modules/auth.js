@@ -63,47 +63,64 @@ const actions = {
     // logger.debug("{}로 회원가입", params.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
-      const user = await firebase.auth().signInWithEmailAndPassword(params.email, params.password);
+      const user = await firebase
+        .auth()
+        .signInWithEmailAndPassword(params.email, params.password);
       if (user.user.emailVerified) {
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            // User is signed in.
+          } else {
+            // No user is signed in.
+          }
+        });
         context.commit("setUserAuthenticated", user);
       } else {
-        const err = { message: "이메일 승인 안됨" }
+        const err = { message: "이메일 승인 안됨" };
         context.commit("auth/setAuthenticationError", err, { root: true });
       }
-      console.log(user.user.emailVerified, "이메일 승인")
-
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
   signOut: async context => {
-    firebase.auth().signOut().then(function () {
-      // Sign-out successful.
-    }).catch(function (error) {
-      // An error happened.
-      console.error(error, "error");
-    });
+    firebase
+      .auth()
+      .signOut()
+      .then(function() {
+        // Sign-out successful.
+      })
+      .catch(function(error) {
+        // An error happened.
+        console.error(error, "error");
+      });
     context.commit("auth/clearAuthentication", null, { root: true });
   },
   signUp: async (context, params) => {
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     var user = null;
     try {
-      firebase.auth().createUserWithEmailAndPassword(params.attributes.email, params.password).then(function () {
-        // console.log(user,"기존유저");
-        user = firebase.auth().currentUser;
-        console.log(user, "user")
-        user.sendEmailVerification();
-      })
-        .then(function () {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(
+          params.attributes.email,
+          params.password
+        )
+        .then(function() {
+          // console.log(user,"기존유저");
+          user = firebase.auth().currentUser;
+          console.log(user, "user");
+          user.sendEmailVerification();
+        })
+        .then(function() {
           user.updateProfile({
-            displayName: params.username,
+            displayName: params.username
             // photoURL: photoURL
           });
         })
         .catch(err => {
           context.commit("auth/setAuthenticationError", err, { root: true });
-          console.error(err, 'err')
+          console.error(err, "err");
         });
       context.commit("auth/clearAuthentication", null, { root: true });
     } catch (err) {
@@ -133,12 +150,16 @@ const actions = {
     console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
-      firebase.auth().sendPasswordResetEmail(params.email).then(function () {
-        // Email sent.
-      }).catch(function (error) {
-        context.commit("auth/setAuthenticationError", error, { root: true });
-        // An error happened.
-      });
+      firebase
+        .auth()
+        .sendPasswordResetEmail(params.email)
+        .then(function() {
+          // Email sent.
+        })
+        .catch(function(error) {
+          context.commit("auth/setAuthenticationError", error, { root: true });
+          // An error happened.
+        });
       // await Auth.forgotPassword(params.username);
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
@@ -161,12 +182,16 @@ const actions = {
     console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
-      firebase.auth().sendPasswordResetEmail(params.email).then(function () {
-        // Email sent.
-      }).catch(function (error) {
-        context.commit("auth/setAuthenticationError", error, { root: true });
-        // An error happened.
-      });
+      firebase
+        .auth()
+        .sendPasswordResetEmail(params.email)
+        .then(function() {
+          // Email sent.
+        })
+        .catch(function(error) {
+          context.commit("auth/setAuthenticationError", error, { root: true });
+          // An error happened.
+        });
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
@@ -176,12 +201,15 @@ const actions = {
     // logger.debug("{}의 비밀번호 변경", context.state.user.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
-      // const user = await Auth.currentAuthenticatedUser();
-      // await Auth.changePassword(
-      // user,
-      // params.currentPassword,
-      // params.newPassword
-      // );
+      var user = firebase.auth().currentUser;
+      console.log(user, "유저");
+      // var newPassword = getASecureRandomPassword();
+
+      // user.updatePassword(newPassword).then(function() {
+      //   // Update successful.
+      // }).catch(function(error) {
+      //   // An error happened.
+      // });
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
@@ -194,5 +222,5 @@ export default {
   getters,
   actions,
   mutations,
-  strict: false,
+  strict: false
 };

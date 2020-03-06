@@ -24,7 +24,8 @@
 import Vue from "vue";
 import { mapState } from "vuex";
 import router from "@/router";
-// import API from "@aws-amplify/api";
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 import Alert from "@/components/auth/Alert.vue";
 
 Vue.component("v-alert", Alert);
@@ -47,16 +48,17 @@ export default {
       isAuthenticated: state => state.auth.isAuthenticated
     })
   },
-  created() {
-    // return API.get("board", "board")
-    //   .then(resData => {
-    //     this.items = resData;
-    //   })
-    //   .catch(err => {
-    //     this.$alert("error =", err).then(() => {
-    //       return;
-    //     });
-    //   });
+  async created() {
+    var db = firebase.firestore();
+    let data
+    data = await db.collection("note").get();
+    let noteData = [];
+    data.forEach(doc => {
+      noteData.push(doc.data());
+      // console.log(doc.id, " => " , doc.data());
+    });
+    console.log(noteData,"노트데이터")
+    this.items = noteData;
   },
   methods: {
     newBoard() {

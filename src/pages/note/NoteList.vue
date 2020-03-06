@@ -28,9 +28,9 @@
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 import router from "@/router";
-// import API from "@aws-amplify/api";
-//import Storage from "@aws-amplify/storage";
 import Alert from "@/components/auth/Alert.vue";
 import VueSimpleAlert from "vue-simple-alert";
 import moment from "moment";
@@ -54,8 +54,18 @@ export default {
       isAuthenticated: state => state.auth.isAuthenticated
     })
   },
-  created() {
-    this.getNoteList();
+  async created() {
+    //this.getNoteList();
+    var db = firebase.firestore();
+    let data
+    data = await db.collection("note").get();
+    let noteData = [];
+    data.forEach(doc => {
+      noteData.push(doc.data());
+      // console.log(doc.id, " => " , doc.data());
+    });
+    console.log(noteData,"노트데이터")
+    this.datas = noteData;
   },
   methods: {
     newNote() {
