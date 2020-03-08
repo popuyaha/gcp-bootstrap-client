@@ -56,4 +56,4 @@ export default {
   border-width: 0.2rem;
 }
 </style>
- /* eslint-disable*/ 
+ /* eslint-enable*/ 
