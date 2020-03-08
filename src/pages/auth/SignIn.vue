@@ -32,7 +32,7 @@
     <b-row class="justify-content-md-center">
       <b-col cols="4">
         <p>
-          <b-link to="signUp">계정 생성</b-link> 또는
+          <b-link to="signUp">계정 생성</b-link>또는
           <b-link to="passwordReset">비밀번호 초기화</b-link>
         </p>
       </b-col>

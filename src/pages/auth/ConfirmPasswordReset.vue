@@ -4,9 +4,7 @@
       <b-col cols="4">
         <div class="b-form-1">
           <h2>비밀번호 초기화 승인</h2>
-          <p>
-            이메일로 받은 코드를 사용하여 비밀번호 재설정을 확인하세요.
-          </p>
+          <p>이메일로 받은 코드를 사용하여 비밀번호 재설정을 확인하세요.</p>
           <b-form-group label="사용자 ID" label-for="usernameInput">
             <b-form-input
               id="usernameInput"
@@ -35,15 +33,8 @@
               placeholder="비밀번호를 입력해 주세요"
             />
           </b-form-group>
-          <b-button
-            type="submit"
-            variant="primary"
-            @click="confirmPasswordReset"
-            >확인</b-button
-          >
-          <b-button variant="primary" @click="passwordResetResend"
-            >코드 재전송</b-button
-          >
+          <b-button type="submit" variant="primary" @click="confirmPasswordReset">확인</b-button>
+          <b-button variant="primary" @click="passwordResetResend">코드 재전송</b-button>
         </div>
       </b-col>
     </b-row>

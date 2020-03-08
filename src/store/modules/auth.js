@@ -128,23 +128,23 @@ const actions = {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
-  confirmSignUp: async (context, params) => {
-    // logger.debug("{}로 로그인 승인", params.username);
-    context.commit("auth/clearAuthenticationStatus", null, { root: true });
-    try {
-      // await Auth.confirmSignUp(params.username, params.code);
-    } catch (err) {
-      context.commit("auth/setAuthenticationError", err, { root: true });
-    }
-  },
-  confirmResend: async (context, params) => {
-    context.commit("auth/clearAuthenticationStatus", null, { root: true });
-    try {
-      // await Auth.resendSignUp(params.username);
-    } catch (err) {
-      context.commit("auth/setAuthenticationError", err, { root: true });
-    }
-  },
+  // confirmSignUp: async (context, params) => {
+  //   // logger.debug("{}로 로그인 승인", params.username);
+  //   context.commit("auth/clearAuthenticationStatus", null, { root: true });
+  //   try {
+  //     // await Auth.confirmSignUp(params.username, params.code);
+  //   } catch (err) {
+  //     context.commit("auth/setAuthenticationError", err, { root: true });
+  //   }
+  // },
+  // confirmResend: async (context, params) => {
+  //   context.commit("auth/clearAuthenticationStatus", null, { root: true });
+  //   try {
+  //     // await Auth.resendSignUp(params.username);
+  //   } catch (err) {
+  //     context.commit("auth/setAuthenticationError", err, { root: true });
+  //   }
+  // },
   passwordReset: async (context, params) => {
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
@@ -163,18 +163,18 @@ const actions = {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
-  confirmPasswordReset: async (context, params) => {
-    context.commit("auth/clearAuthenticationStatus", null, { root: true });
-    try {
-      // await Auth.forgotPasswordSubmit(
-      // params.username,
-      // params.code,
-      // params.password
-      // );
-    } catch (err) {
-      context.commit("auth/setAuthenticationError", err, { root: true });
-    }
-  },
+  // confirmPasswordReset: async (context, params) => {
+  //   context.commit("auth/clearAuthenticationStatus", null, { root: true });
+  //   try {
+  //     // await Auth.forgotPasswordSubmit(
+  //     // params.username,
+  //     // params.code,
+  //     // params.password
+  //     // );
+  //   } catch (err) {
+  //     context.commit("auth/setAuthenticationError", err, { root: true });
+  //   }
+  // },
   passwordResetResend: async (context, params) => {
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
@@ -192,22 +192,25 @@ const actions = {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
-  passwordChange: async (context, params) => {
-    // logger.debug("{}의 비밀번호 변경", context.state.user.username);
-    context.commit("auth/clearAuthenticationStatus", null, { root: true });
-    try {
-      var user = firebase.auth().currentUser;
-      // var newPassword = getASecureRandomPassword();
-
-      // user.updatePassword(newPassword).then(function() {
-      //   // Update successful.
-      // }).catch(function(error) {
-      //   // An error happened.
-      // });
-    } catch (err) {
-      context.commit("auth/setAuthenticationError", err, { root: true });
-    }
-  }
+  // passwordChange: async (context, params) => {
+  //   // logger.debug("{}의 비밀번호 변경", context.state.user.username);
+  //   context.commit("auth/clearAuthenticationStatus", null, { root: true });
+  //   try {
+  //     var user = firebase.auth().currentUser;
+  //     var newPassword = getASecureRandomPassword();
+  //     var oldPassword = params.password
+  //     user.updatePassword(newPassword).then(function() {
+        
+  //       // Update successful.
+  //     }).catch(function(error) {
+  //       this.$alert("비밀번호 변경 에러 =", error).then(() => {
+  //         return;
+  //       });
+  //     });
+  //   } catch (err) {
+  //     context.commit("auth/setAuthenticationError", err, { root: true });
+  //   }
+  // }
 };
 
 export default {

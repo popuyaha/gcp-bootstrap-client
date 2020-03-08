@@ -6,10 +6,7 @@
           <h2>비밀번호 변경</h2>
           <p>비밀번호를 변경합니다.</p>
           <b-form @submit.prevent="passwordChange">
-            <b-form-group
-              label="현재 비밀번호"
-              label-for="currentPasswordInput"
-            >
+            <b-form-group label="현재 비밀번호" label-for="currentPasswordInput">
               <b-form-input
                 id="currentPasswordInput"
                 type="password"

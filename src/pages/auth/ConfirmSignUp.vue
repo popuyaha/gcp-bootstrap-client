@@ -23,12 +23,8 @@
               placeholder="전달받은 코드를 입력해 주세요"
             />
           </b-form-group>
-          <b-button type="submit" variant="primary" @click="confirmSignUp"
-            >확인</b-button
-          >
-          <b-button variant="primary" @click="confirmResend"
-            >코드 재전송</b-button
-          >
+          <b-button type="submit" variant="primary" @click="confirmSignUp">확인</b-button>
+          <b-button variant="primary" @click="confirmResend">코드 재전송</b-button>
         </div>
       </b-col>
     </b-row>

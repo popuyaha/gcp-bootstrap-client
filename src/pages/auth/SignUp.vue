@@ -23,7 +23,7 @@
                 required
                 placeholder="이름을 적어주세요"
               />
-            </b-form-group> -->
+            </b-form-group>-->
             <b-form-group label="Email" label-for="emailInput">
               <b-form-input
                 id="emailInput"

@@ -98,7 +98,7 @@ export default {
           this.subsubCommentUpdateToggle();
           this.reloadSubSubComments();
         } catch (error) {
-          this.$alert("대댓글 수정 에러 =", e).then(() => {
+          this.$alert("대댓글 수정 에러 =", error).then(() => {
             return;
           });
         }

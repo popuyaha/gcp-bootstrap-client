@@ -4,9 +4,7 @@
       <b-form-textarea
         id="textarea"
         v-model="context"
-        :placeholder="
-          '코멘트를 달아주세요~!'
-        "
+        :placeholder="'코멘트를 달아주세요~!'"
         rows="3"
         max-rows="6"
       ></b-form-textarea>
