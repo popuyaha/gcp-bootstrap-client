@@ -77,7 +77,9 @@ export default {
             });
           this.reloadSubComments();
         } catch (error) {
-          console.error(error, "댓글 수정 에러");
+          this.$alert("댓글 수정 에러 =", error).then(() => {
+            return;
+          });
         }
       } catch (e) {
         this.$alert("error =", e).then(() => {

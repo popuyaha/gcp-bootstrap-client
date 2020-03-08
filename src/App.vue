@@ -1,3 +1,4 @@
+ /* eslint-disable*/ 
 <template>
   <div id="app">
     <b-container class="main" fluid>
@@ -55,3 +56,4 @@ export default {
   border-width: 0.2rem;
 }
 </style>
+ /* eslint-disable*/ 
