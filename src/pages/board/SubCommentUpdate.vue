@@ -39,7 +39,7 @@ export default {
     subsubCommentUpdateToggle: Function,
     isSubComment: Boolean,
     noteId: String,
-    replyData: Object,
+    replyData: Object
   },
   data() {
     return {
@@ -58,32 +58,50 @@ export default {
   methods: {
     async updateComment(data) {
       try {
-        let list
-        let replyList = ''
-        let id = ''
-        let replyId = ''
-        list = await this.db.collection("board").doc(this.noteId).collection("reply").where("sort","==",this.replyData.sort).get();
+        let list;
+        let replyList = "";
+        let id = "";
+        let replyId = "";
+        list = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .where("sort", "==", this.replyData.sort)
+          .get();
         list.forEach(doc => {
           id = doc.id;
           //console.log(id,doc.id,"댓글아이디");
         });
-        replyList = await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").where("sort","==",this.content.sort).get();
+        replyList = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .doc(id)
+          .collection("rereply")
+          .where("sort", "==", this.content.sort)
+          .get();
         replyList.forEach(doc => {
           replyId = doc.id;
-          });
+        });
 
         try {
-          await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").doc(replyId).update({
-            content : data
-          });
+          await this.db
+            .collection("board")
+            .doc(this.noteId)
+            .collection("reply")
+            .doc(id)
+            .collection("rereply")
+            .doc(replyId)
+            .update({
+              content: data
+            });
           this.subsubCommentUpdateToggle();
-          this.reloadSubSubComments();  
+          this.reloadSubSubComments();
         } catch (error) {
           this.$alert("대댓글 수정 에러 =", e).then(() => {
             return;
           });
         }
-        
       } catch (e) {
         this.$alert("error =", e).then(() => {
           return;

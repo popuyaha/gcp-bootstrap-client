@@ -50,34 +50,39 @@ export default {
     })
   },
   async created() {
-    let data
+    let data;
     try {
       data = await this.db.collection("board").get();
       let noteData = [];
       data.forEach(doc => {
         noteData.push(doc.data());
       });
-      this.items = noteData;  
+      this.items = noteData;
     } catch (error) {
-      console.error(error,"error");
+      console.error(error, "error");
     }
-    
   },
   methods: {
     newBoard() {
       router.push("board/newboard");
     },
     async updateNote(item) {
-      let data
-      let id = ''
-      data = await this.db.collection("board").where("sort","==",item.sort).get();
-      data.forEach(doc => {
-        id = doc.id
-      });
-      this.$nextTick(function() {
+      try {
+        let data;
+        let id = "";
+        data = await this.db
+          .collection("board")
+          .where("sort", "==", item.sort)
+          .get();
+        data.forEach(doc => {
+          id = doc.id;
+        });
+        this.$nextTick(function() {
           router.push("board/readboard?noteId=" + id);
-      });
-      
+        });
+      } catch (error) {
+        console.error(error, "수정 에러");
+      }
     },
     onChangePage(pageOfItems) {
       // update page of items

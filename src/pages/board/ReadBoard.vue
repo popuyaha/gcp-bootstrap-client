@@ -106,11 +106,12 @@ export default {
           id = doc.id
         });
         try{
-          console.log(id,"아이디")
           await this.db.collection("board").doc(id).delete();
           router.replace("/board");
         }catch(e){
-          console.error(e,"삭제 오류");
+          this.$alert("삭제 오류 =", e).then(() => {
+            return;
+          });
         }
       } catch (e) {
         this.$alert("error =", e).then(() => {

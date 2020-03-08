@@ -57,21 +57,30 @@ export default {
   methods: {
     async updateComment(data) {
       try {
-        let list
-        let id = ''
-        list = await this.db.collection("board").doc(this.noteId).collection("reply").where("sort","==",this.content.sort).get();
+        let list;
+        let id = "";
+        list = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .where("sort", "==", this.content.sort)
+          .get();
         list.forEach(doc => {
           id = doc.id;
         });
         try {
-          await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).update({
-            content : data
-          });
-          this.reloadSubComments();  
+          await this.db
+            .collection("board")
+            .doc(this.noteId)
+            .collection("reply")
+            .doc(id)
+            .update({
+              content: data
+            });
+          this.reloadSubComments();
         } catch (error) {
-          console.error(error,"댓글 수정 에러");
+          console.error(error, "댓글 수정 에러");
         }
-        
       } catch (e) {
         this.$alert("error =", e).then(() => {
           return;

@@ -86,7 +86,7 @@ export default {
               content: this.content
             })
           : await this.updateNote({
-              item : this.items,
+              item: this.items,
               title: this.title,
               content: this.content,
               noteId: this.items.noteId
@@ -96,8 +96,7 @@ export default {
           return;
         });
         //this.setState({ isLoading: false });
-      }  
-      
+      }
     },
     back() {
       router.replace("/notelist");
@@ -105,10 +104,14 @@ export default {
     async createNote(note) {
       try {
         this.db.collection("note").add({
-        title: note.title, content: note.content, uid: this.user.user.uid,
-        capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        name: this.user.user.displayName,
-        sort: firebase.firestore.FieldValue.serverTimestamp()});
+          title: note.title,
+          content: note.content,
+          uid: this.user.user.uid,
+          capital: false,
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          name: this.user.user.displayName,
+          sort: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
         router.replace("/notelist");
       } catch (e) {
@@ -120,16 +123,22 @@ export default {
     },
     async updateNote(note) {
       try {
-        let data
-        let id = ''
-        data = await this.db.collection("note").where("sort","==",this.items.sort).get();
+        let data;
+        let id = "";
+        data = await this.db
+          .collection("note")
+          .where("sort", "==", this.items.sort)
+          .get();
         data.forEach(doc => {
-          id = doc.id
+          id = doc.id;
         });
-        await this.db.collection("note").doc(id).update({
-          title : note.title,
-          content : note.content
-        });
+        await this.db
+          .collection("note")
+          .doc(id)
+          .update({
+            title: note.title,
+            content: note.content
+          });
         router.replace("/notelist");
       } catch (e) {
         this.$alert("error =", e).then(() => {

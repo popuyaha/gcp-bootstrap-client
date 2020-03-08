@@ -61,10 +61,16 @@ export default {
   methods: {
     async createComment() {
       try {
-        this.db.collection("board").doc(this.noteId).collection("reply").add({
-        content: this.content, uid: this.user.user.uid,
-        name: this.user.user.displayName,
-        sort: firebase.firestore.FieldValue.serverTimestamp()});
+        this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .add({
+            content: this.content,
+            uid: this.user.user.uid,
+            name: this.user.user.displayName,
+            sort: firebase.firestore.FieldValue.serverTimestamp()
+          });
         this.content = "";
         this.reloadComment();
       } catch (e) {
@@ -73,9 +79,8 @@ export default {
         });
         //this.setState({ isLoading: false });
       }
-    },
+    }
   }
-  
 };
 </script>
 

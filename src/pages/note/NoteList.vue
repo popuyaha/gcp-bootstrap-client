@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       datas: [],
-      db : firebase.firestore()
+      db: firebase.firestore()
       //attachmentURL : '',
       //attachment: [],
       //file: null
@@ -74,18 +74,26 @@ export default {
       return moment(date).format("YYYY년 MM월 DD일");
     },
     async deleteNote(note) {
-      try {  
-        let data
-        let id = ''  
-        data = await this.db.collection("note").where("sort","==",note.sort).get();
+      try {
+        let data;
+        let id = "";
+        data = await this.db
+          .collection("note")
+          .where("sort", "==", note.sort)
+          .get();
         data.forEach(doc => {
-          id = doc.id
+          id = doc.id;
         });
-        try{
-          await this.db.collection("note").doc(id).delete();
+        try {
+          await this.db
+            .collection("note")
+            .doc(id)
+            .delete();
           this.getNoteList();
-        }catch(e){
-          console.error(e,"삭제 오류");
+        } catch (e) {
+          this.$alert("삭제 오류 =", e).then(() => {
+            return;
+          });
         }
       } catch (e) {
         this.$alert("error =", e).then(() => {
@@ -94,17 +102,22 @@ export default {
         //this.setState({ isLoading: false });
       }
     },
-    async getNoteList(){
-      let data
+    async getNoteList() {
+      let data;
       try {
-        data = await this.db.collection("note").where("uid","==",this.user.user.uid).get();
+        data = await this.db
+          .collection("note")
+          .where("uid", "==", this.user.user.uid)
+          .get();
         let noteData = [];
         data.forEach(doc => {
           noteData.push(doc.data());
         });
-        this.datas = noteData;  
+        this.datas = noteData;
       } catch (error) {
-        console.error(error,"error");
+        this.$alert("error =", error).then(() => {
+          return;
+        });
       }
     }
   }

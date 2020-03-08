@@ -39,7 +39,7 @@ export default {
     commentId: String,
     content: Object,
     noteId: String,
-    datas: Object,
+    datas: Object
   },
   data() {
     return {
@@ -57,35 +57,46 @@ export default {
   methods: {
     async createSubComment() {
       try {
-        let list
-        let id = ''
-        
-        list = await this.db.collection("board").doc(this.noteId).collection("reply").where("sort","==",this.content.sort).get();
+        let list;
+        let id = "";
+
+        list = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .where("sort", "==", this.content.sort)
+          .get();
         list.forEach(doc => {
           id = doc.id;
         });
         try {
-          await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").add({
-          content: this.context, uid: this.user.user.uid,
-          name: this.user.user.displayName,
-          sort: firebase.firestore.FieldValue.serverTimestamp()});
+          await this.db
+            .collection("board")
+            .doc(this.noteId)
+            .collection("reply")
+            .doc(id)
+            .collection("rereply")
+            .add({
+              content: this.context,
+              uid: this.user.user.uid,
+              name: this.user.user.displayName,
+              sort: firebase.firestore.FieldValue.serverTimestamp()
+            });
           this.context = "";
           this.subCommentToggle();
           this.reloadSubSubComments();
         } catch (error) {
           this.$alert("error =", error).then(() => {
-          return;
-        });
+            return;
+          });
         }
-        
       } catch (e) {
         this.$alert("error =", e).then(() => {
           return;
         });
         //this.setState({ isLoading: false });
       }
-    },
-    
+    }
   }
 };
 </script>

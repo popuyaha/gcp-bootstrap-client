@@ -91,8 +91,7 @@ export default {
     ...mapState({
       user: state => state.auth.user,
       isAuthenticated: state => state.auth.isAuthenticated
-    }),
-    
+    })
   },
   components: {
     CommentSubCreate,
@@ -156,7 +155,7 @@ export default {
           return;
         });
       } else {
-        this.subsubDatas = this.subCommentList[index]
+        this.subsubDatas = this.subCommentList[index];
         this.subsubCommentUpdateToggle();
       }
     },
@@ -171,7 +170,7 @@ export default {
         });
       }
     },
-    async deleteSubCommentConfirm(data){
+    async deleteSubCommentConfirm(data) {
       if (data.uid != this.user.user.uid) {
         this.$alert("작성자만 삭제할 수 있습니다.").then(() => {
           return;
@@ -185,53 +184,79 @@ export default {
     dateFmt(date) {
       return moment(date).format("YYYY년 MM월 DD일");
     },
-    async deleteComment(data){
+    async deleteComment(data) {
       try {
-        let list
-        let id = ''
-        list = await this.db.collection("board").doc(this.noteId).collection("reply").where("sort","==",data.sort).get();
+        let list;
+        let id = "";
+        list = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .where("sort", "==", data.sort)
+          .get();
         list.forEach(doc => {
           id = doc.id;
         });
         try {
-          await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).delete();  
+          await this.db
+            .collection("board")
+            .doc(this.noteId)
+            .collection("reply")
+            .doc(id)
+            .delete();
           this.reloadComment();
         } catch (error) {
-          console.error(error,"댓글 삭제 에러");
+          console.error(error, "댓글 삭제 에러");
         }
-        
       } catch (error) {
-        console.error(error,"Error")
+        console.error(error, "Error");
       }
-      
     },
-    async deleteSubComment(data){
+    async deleteSubComment(data) {
       try {
-        let list
-        let replyList = ''
-        let id = ''
-        let deleteId = ''
-        list = await this.db.collection("board").doc(this.noteId).collection("reply").where("sort","==",this.commentObj.sort).get();
+        let list;
+        let replyList = "";
+        let id = "";
+        let deleteId = "";
+        list = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .where("sort", "==", this.commentObj.sort)
+          .get();
         list.forEach(doc => {
           id = doc.id;
           // console.log(id,doc.id,"댓글아이디");
         });
 
-        replyList = await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").where("sort","==",data.sort).get();
+        replyList = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .doc(id)
+          .collection("rereply")
+          .where("sort", "==", data.sort)
+          .get();
         replyList.forEach(doc => {
           deleteId = doc.id;
           // console.log(replyId,doc.data(),"댓글아이디");
         });
-        
+
         try {
-          await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").doc(deleteId).delete();
+          await this.db
+            .collection("board")
+            .doc(this.noteId)
+            .collection("reply")
+            .doc(id)
+            .collection("rereply")
+            .doc(deleteId)
+            .delete();
           this.reloadSubSubComments();
         } catch (error) {
           this.$alert("error =", error).then(() => {
-          return;
-        });
+            return;
+          });
         }
-        
       } catch (e) {
         this.$alert("error =", e).then(() => {
           return;
@@ -239,26 +264,36 @@ export default {
         //this.setState({ isLoading: false });
       }
     },
-    async rereplyList(){
+    async rereplyList() {
       this.subCommentList = [];
       try {
-        let list
-        let replyList
-        let id = ''
+        let list;
+        let replyList;
+        let id = "";
         // let replyId = ''
 
-        list = await this.db.collection("board").doc(this.noteId).collection("reply").where("sort","==",this.commentObj.sort).get();
+        list = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .where("sort", "==", this.commentObj.sort)
+          .get();
         list.forEach(doc => {
           id = doc.id;
         });
-        replyList = await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").get();
+        replyList = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .doc(id)
+          .collection("rereply")
+          .get();
         replyList.forEach(doc => {
           id = doc.id;
-          this.subCommentList.push(doc.data())
+          this.subCommentList.push(doc.data());
         });
-        
       } catch (error) {
-        console.error(error,"Error")
+        console.error(error, "Error");
       }
     }
   }

@@ -63,7 +63,7 @@ export default {
         this.items == undefined
           ? this.createBoard({
               title: this.title,
-              content: this.content,
+              content: this.content
             })
           : this.updateBoard({
               title: this.title,
@@ -79,11 +79,14 @@ export default {
     },
     async back() {
       if (this.items) {
-        let data
-        let id = ''
-        data = await this.db.collection("board").where("sort","==",this.items.sort).get();
+        let data;
+        let id = "";
+        data = await this.db
+          .collection("board")
+          .where("sort", "==", this.items.sort)
+          .get();
         data.forEach(doc => {
-          id = doc.id
+          id = doc.id;
         });
         router.replace("/board/readboard?noteId=" + id);
       } else {
@@ -93,33 +96,40 @@ export default {
     async createBoard(board) {
       try {
         this.db.collection("board").add({
-        title: board.title, content: board.content, uid: this.user.user.uid,
-        name: this.user.user.displayName,
-        sort: firebase.firestore.FieldValue.serverTimestamp()});
+          title: board.title,
+          content: board.content,
+          uid: this.user.user.uid,
+          name: this.user.user.displayName,
+          sort: firebase.firestore.FieldValue.serverTimestamp()
+        });
         this.$nextTick(function() {
           router.replace("/board");
         });
-        
       } catch (e) {
         this.$alert("error =", e).then(() => {
           return;
         });
         //this.setState({ isLoading: false });
       }
-     
     },
     async updateBoard(board) {
       try {
-        let data
-        let id = ''
-        data = await this.db.collection("board").where("sort","==",this.items.sort).get();
+        let data;
+        let id = "";
+        data = await this.db
+          .collection("board")
+          .where("sort", "==", this.items.sort)
+          .get();
         data.forEach(doc => {
-          id = doc.id
+          id = doc.id;
         });
-        await this.db.collection("board").doc(id).update({
-          title : board.title,
-          content : board.content
-        });
+        await this.db
+          .collection("board")
+          .doc(id)
+          .update({
+            title: board.title,
+            content: board.content
+          });
         router.replace("/board/readboard?noteId=" + id);
       } catch (e) {
         this.$alert("error =", e).then(() => {

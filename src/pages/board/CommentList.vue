@@ -35,10 +35,9 @@ export default {
     ...mapState({
       user: state => state.auth.user,
       isAuthenticated: state => state.auth.isAuthenticated
-    }),
+    })
   },
   created() {
-    
     this.commentList();
   },
   components: {
@@ -49,8 +48,12 @@ export default {
     async commentList() {
       try {
         this.datas = [];
-        let data
-        data = await this.db.collection("board").doc(this.noteId).collection("reply").get();
+        let data;
+        data = await this.db
+          .collection("board")
+          .doc(this.noteId)
+          .collection("reply")
+          .get();
         data.forEach(doc => {
           this.datas.push(doc.data());
         });

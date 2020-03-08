@@ -59,7 +59,6 @@ const actions = {
     context.commit("clearAuthenticationStatus", null);
   },
   signIn: async (context, params) => {
-    console.log(params, "params");
     // logger.debug("{}로 회원가입", params.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
@@ -67,7 +66,7 @@ const actions = {
         .auth()
         .signInWithEmailAndPassword(params.email, params.password);
       if (user.user.emailVerified) {
-        firebase.auth().onAuthStateChanged(function(user) {
+        firebase.auth().onAuthStateChanged(function (user) {
           if (user) {
             // User is signed in.
           } else {
@@ -87,12 +86,14 @@ const actions = {
     firebase
       .auth()
       .signOut()
-      .then(function() {
+      .then(function () {
         // Sign-out successful.
       })
-      .catch(function(error) {
+      .catch(function (error) {
         // An error happened.
-        console.error(error, "error");
+        this.$alert("error =", error).then(() => {
+          return;
+        });
       });
     context.commit("auth/clearAuthentication", null, { root: true });
   },
@@ -106,13 +107,11 @@ const actions = {
           params.attributes.email,
           params.password
         )
-        .then(function() {
-          // console.log(user,"기존유저");
+        .then(function () {
           user = firebase.auth().currentUser;
-          console.log(user, "user");
           user.sendEmailVerification();
         })
-        .then(function() {
+        .then(function () {
           user.updateProfile({
             displayName: params.username
             // photoURL: photoURL
@@ -120,7 +119,9 @@ const actions = {
         })
         .catch(err => {
           context.commit("auth/setAuthenticationError", err, { root: true });
-          console.error(err, "err");
+          this.$alert("error =", err).then(() => {
+            return;
+          });
         });
       context.commit("auth/clearAuthentication", null, { root: true });
     } catch (err) {
@@ -128,7 +129,6 @@ const actions = {
     }
   },
   confirmSignUp: async (context, params) => {
-    console.log(params, "params");
     // logger.debug("{}로 로그인 승인", params.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
@@ -138,7 +138,6 @@ const actions = {
     }
   },
   confirmResend: async (context, params) => {
-    console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       // await Auth.resendSignUp(params.username);
@@ -147,16 +146,15 @@ const actions = {
     }
   },
   passwordReset: async (context, params) => {
-    console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       firebase
         .auth()
         .sendPasswordResetEmail(params.email)
-        .then(function() {
+        .then(function () {
           // Email sent.
         })
-        .catch(function(error) {
+        .catch(function (error) {
           context.commit("auth/setAuthenticationError", error, { root: true });
           // An error happened.
         });
@@ -166,7 +164,6 @@ const actions = {
     }
   },
   confirmPasswordReset: async (context, params) => {
-    console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       // await Auth.forgotPasswordSubmit(
@@ -179,16 +176,15 @@ const actions = {
     }
   },
   passwordResetResend: async (context, params) => {
-    console.log(params, "params");
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       firebase
         .auth()
         .sendPasswordResetEmail(params.email)
-        .then(function() {
+        .then(function () {
           // Email sent.
         })
-        .catch(function(error) {
+        .catch(function (error) {
           context.commit("auth/setAuthenticationError", error, { root: true });
           // An error happened.
         });
@@ -197,12 +193,10 @@ const actions = {
     }
   },
   passwordChange: async (context, params) => {
-    console.log(params, "params");
     // logger.debug("{}의 비밀번호 변경", context.state.user.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       var user = firebase.auth().currentUser;
-      console.log(user, "유저");
       // var newPassword = getASecureRandomPassword();
 
       // user.updatePassword(newPassword).then(function() {
