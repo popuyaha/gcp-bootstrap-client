@@ -59,13 +59,16 @@ export default {
   },
   async mounted() {
     try {
-      let data
+      let data;
       // let id = ''
       // let resData = [];
-      data = await this.db.collection("board").doc(this.item).get();
-      this.items=data.data();
+      data = await this.db
+        .collection("board")
+        .doc(this.item)
+        .get();
+      this.items = data.data();
     } catch (error) {
-      console.error(error,"error");
+      console.error(error, "error");
     }
   },
   methods: {
@@ -97,18 +100,24 @@ export default {
     dateFmt(date) {
       return moment(date).format("YYYY년 MM월 DD일");
     },
-    async deleteData(){
+    async deleteData() {
       try {
-        let data
-        let id = ''
-        data = await this.db.collection("board").where("sort","==",this.items.sort).get();
+        let data;
+        let id = "";
+        data = await this.db
+          .collection("board")
+          .where("sort", "==", this.items.sort)
+          .get();
         data.forEach(doc => {
-          id = doc.id
+          id = doc.id;
         });
-        try{
-          await this.db.collection("board").doc(id).delete();
+        try {
+          await this.db
+            .collection("board")
+            .doc(id)
+            .delete();
           router.replace("/board");
-        }catch(e){
+        } catch (e) {
           this.$alert("삭제 오류 =", e).then(() => {
             return;
           });
