@@ -59,7 +59,9 @@ export default {
       });
       this.items = noteData;
     } catch (error) {
-      console.error(error, "error");
+      this.$alert("에러 =", error).then(() => {
+            return;
+          });
     }
   },
   methods: {
@@ -81,7 +83,9 @@ export default {
           router.push("board/readboard?noteId=" + id);
         });
       } catch (error) {
-        console.error(error, "수정 에러");
+        this.$alert("수정 에러 =", error).then(() => {
+            return;
+          });
       }
     },
     onChangePage(pageOfItems) {

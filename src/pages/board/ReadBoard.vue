@@ -68,7 +68,9 @@ export default {
         .get();
       this.items = data.data();
     } catch (error) {
-      console.error(error, "error");
+      this.$alert("에러 =", error).then(() => {
+            return;
+          });
     }
   },
   methods: {

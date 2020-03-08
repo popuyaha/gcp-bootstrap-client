@@ -5,7 +5,7 @@
         <div>{{ commentObj.name }}</div>
         <div>{{ dateFmt(commentObj.created_at) }}</div>
       </div>
-      <div class="comment-list-item-context" style="white-space:pre;">{{ commentObj.content }}</div>
+      <div class="comment-list-item-context" style="white-space:pre;">  {{ commentObj.content }}  </div>
 
       <div class="comment-list-item-button">
         <!-- <b-button variant="info" @click="updateComment(commentObj)">수정</b-button> -->
@@ -206,10 +206,14 @@ export default {
             .delete();
           this.reloadComment();
         } catch (error) {
-          console.error(error, "댓글 삭제 에러");
+          this.$alert("댓글 삭제 에러 =", error).then(() => {
+            return;
+          });
         }
       } catch (error) {
-        console.error(error, "Error");
+        this.$alert("에러 =", error).then(() => {
+            return;
+          });
       }
     },
     async deleteSubComment(data) {
@@ -293,7 +297,9 @@ export default {
           this.subCommentList.push(doc.data());
         });
       } catch (error) {
-        console.error(error, "Error");
+        this.$alert("에러 =", error).then(() => {
+            return;
+        });
       }
     }
   }
