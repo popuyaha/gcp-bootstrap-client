@@ -85,14 +85,12 @@ export default {
         data.forEach(doc => {
           id = doc.id
         });
-        console.log(id)
         router.replace("/board/readboard?noteId=" + id);
       } else {
         router.replace("/board");
       }
     },
     async createBoard(board) {
-      console.log(board,"오냐")
       try {
         this.db.collection("board").add({
         title: board.title, content: board.content, uid: this.user.user.uid,
@@ -111,7 +109,6 @@ export default {
      
     },
     async updateBoard(board) {
-      console.log("수정으로")
       try {
         let data
         let id = ''

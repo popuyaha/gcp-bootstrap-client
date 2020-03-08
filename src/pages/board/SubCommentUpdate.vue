@@ -57,9 +57,6 @@ export default {
   },
   methods: {
     async updateComment(data) {
-      console.log(data,"data")
-      console.log(this.noteId,this.content,"노틍ㅇ");
-      console.log(this.replyData,"리플데이터");
       try {
         let list
         let replyList = ''
@@ -73,8 +70,7 @@ export default {
         replyList = await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").where("sort","==",this.content.sort).get();
         replyList.forEach(doc => {
           replyId = doc.id;
-          console.log(id,doc.data(),"댓글아이디");
-        });
+          });
 
         try {
           await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").doc(replyId).update({
@@ -83,7 +79,9 @@ export default {
           this.subsubCommentUpdateToggle();
           this.reloadSubSubComments();  
         } catch (error) {
-          console.error(error,"대댓글 수정 에러");
+          this.$alert("대댓글 수정 에러 =", e).then(() => {
+            return;
+          });
         }
         
       } catch (e) {
