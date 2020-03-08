@@ -1,6 +1,6 @@
 <template>
   <div class="comment-create">
-    <b-input-group :prepend="this.user.attributes.name" class="mt-3">
+    <b-input-group :prepend="this.user.user.displayName" class="mt-3">
       <b-form-textarea
         id="textarea"
         v-model="context"
@@ -20,8 +20,9 @@
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 //import CommentCreate from "./CommentCreate";
-// import API from "@aws-amplify/api";
 import Alert from "@/components/auth/Alert.vue";
 // import router from "@/router";
 
@@ -42,8 +43,9 @@ export default {
   data() {
     return {
       name: "",
-      context: this.content.context,
-      datas: []
+      context: this.content.content,
+      datas: [],
+      db: firebase.firestore()
     };
   },
   computed: {
@@ -54,23 +56,28 @@ export default {
   },
   methods: {
     async updateComment(data) {
-      // const params = {
-      //   context: data
-      // };
-      console.log(data,"data");
-      // await API.put("reply", "reply/" + this.content.commentId, {
-      //   body: params
-      // })
-      //   .then(response => {
-      //     this.reloadSubComments();
-      //     this.subUpdateCommentToggle();
-      //     return response;
-      //   })
-      //   .catch(error =>
-      //     this.$alert("error =", error).then(() => {
-      //       return;
-      //     })
-      //   );
+      try {
+        let list
+        let id = ''
+        list = await this.db.collection("board").doc(this.noteId).collection("reply").where("sort","==",this.content.sort).get();
+        list.forEach(doc => {
+          id = doc.id;
+        });
+        try {
+          await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).update({
+            content : data
+          });
+          this.reloadSubComments();  
+        } catch (error) {
+          console.error(error,"댓글 수정 에러");
+        }
+        
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
+        });
+        //this.setState({ isLoading: false });
+      }
     }
   }
 };

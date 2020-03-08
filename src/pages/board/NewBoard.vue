@@ -12,7 +12,7 @@
 
     <b-form-textarea
       id="textarea"
-      v-model="context"
+      v-model="content"
       placeholder="Enter something..."
       rows="6"
       max-rows="9"
@@ -37,6 +37,8 @@
 <script>
 // import API from "@aws-amplify/api";
 import router from "@/router";
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 import { mapState } from "vuex";
 
 export default {
@@ -45,7 +47,8 @@ export default {
     return {
       items: items,
       title: items !== undefined ? items.title : "",
-      context: items !== undefined ? items.context : ""
+      content: items !== undefined ? items.content : "",
+      db: firebase.firestore()
     };
   },
   computed: {
@@ -58,18 +61,14 @@ export default {
     async newBoard() {
       try {
         this.items == undefined
-          ? await this.createBoard({
+          ? this.createBoard({
               title: this.title,
-              context: this.context,
-              username: this.user.username,
-              name: this.user.attributes.name
-              // attachment
+              content: this.content,
             })
-          : await this.updateBoard({
+          : this.updateBoard({
               title: this.title,
-              context: this.context,
+              content: this.content,
               noteId: this.items.noteId
-              // attachment
             });
       } catch (e) {
         this.$alert("error =", e).then(() => {
@@ -78,42 +77,59 @@ export default {
         //this.setState({ isLoading: false });
       }
     },
-    back() {
+    async back() {
       if (this.items) {
-        router.replace("/board/readboard?noteId=" + this.items.noteId);
+        let data
+        let id = ''
+        data = await this.db.collection("board").where("sort","==",this.items.sort).get();
+        data.forEach(doc => {
+          id = doc.id
+        });
+        console.log(id)
+        router.replace("/board/readboard?noteId=" + id);
       } else {
         router.replace("/board");
       }
     },
-    createBoard(board) {
-      console.log(board,"board");
-      // return API.post("board", "board", {
-      //   body: board
-      // })
-      //   .then(response => {
-      //     router.replace("/board");
-      //     return response;
-      //   })
-      //   .catch(error =>
-      //     this.$alert("error =", error).then(() => {
-      //       return;
-      //     })
-      //   );
+    async createBoard(board) {
+      console.log(board,"오냐")
+      try {
+        this.db.collection("board").add({
+        title: board.title, content: board.content, uid: this.user.user.uid,
+        name: this.user.user.displayName,
+        sort: firebase.firestore.FieldValue.serverTimestamp()});
+        this.$nextTick(function() {
+          router.replace("/board");
+        });
+        
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
+        });
+        //this.setState({ isLoading: false });
+      }
+     
     },
-    updateBoard(board) {
-      console.log(board,"board");
-      // return API.put("board", "board/" + board.noteId, {
-      //   body: board
-      // })
-      //   .then(response => {
-      //     router.replace("/board");
-      //     return response;
-      //   })
-      //   .catch(error =>
-      //     this.$alert("error =", error).then(() => {
-      //       return;
-      //     })
-      //   );
+    async updateBoard(board) {
+      console.log("수정으로")
+      try {
+        let data
+        let id = ''
+        data = await this.db.collection("board").where("sort","==",this.items.sort).get();
+        data.forEach(doc => {
+          id = doc.id
+        });
+        await this.db.collection("board").doc(id).update({
+          title : board.title,
+          content : board.content
+        });
+        router.replace("/board/readboard?noteId=" + id);
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
+        });
+        //this.setState({ isLoading: false });
+      }
     }
   }
 };

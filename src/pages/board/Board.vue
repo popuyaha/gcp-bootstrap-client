@@ -39,7 +39,8 @@ export default {
         { key: "title", label: "제목", sortable: true },
         { key: "name", label: "사용자명", sortable: true }
       ],
-      items: []
+      items: [],
+      db: firebase.firestore()
     };
   },
   computed: {
@@ -49,24 +50,34 @@ export default {
     })
   },
   async created() {
-    var db = firebase.firestore();
     let data
-    data = await db.collection("note").get();
-    let noteData = [];
-    data.forEach(doc => {
-      noteData.push(doc.data());
-      // console.log(doc.id, " => " , doc.data());
-    });
-    console.log(noteData,"노트데이터")
-    this.items = noteData;
+    try {
+      data = await this.db.collection("board").get();
+      let noteData = [];
+      data.forEach(doc => {
+        noteData.push(doc.data());
+      });
+      this.items = noteData;  
+    } catch (error) {
+      console.error(error,"error");
+    }
+    
   },
   methods: {
     newBoard() {
       router.push("board/newboard");
     },
-    updateNote(item) {
-      // router.push({ name: "readboard", params: { item } });
-      router.push("board/readboard?noteId=" + item.noteId);
+    async updateNote(item) {
+      let data
+      let id = ''
+      data = await this.db.collection("board").where("sort","==",item.sort).get();
+      data.forEach(doc => {
+        id = doc.id
+      });
+      this.$nextTick(function() {
+          router.push("board/readboard?noteId=" + id);
+      });
+      
     },
     onChangePage(pageOfItems) {
       // update page of items

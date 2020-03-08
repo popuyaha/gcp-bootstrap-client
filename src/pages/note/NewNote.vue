@@ -57,7 +57,8 @@ export default {
       title: items !== undefined ? items.title : "",
       content: items !== undefined ? items.content : "",
       attachmentURL: null,
-      attachment: []
+      attachment: [],
+      db: firebase.firestore()
       // file: items !== undefined ? items.attachment : null
     };
   },
@@ -78,86 +79,38 @@ export default {
   },
   methods: {
     async newNote() {
-      // if (this.file && this.file.size > config.MAX_ATTACHMENT_SIZE) {
-      //     alert(`${config.MAX_ATTACHMENT_SIZE/1000000} MB. 보다 작은 파일을 선택해 주세요`);
-      //     return;
-      // }
       try {
-       
-        console.log(this.user.user.uid,"들어오니");
-        var db = firebase.firestore();
-        // const noteRef = db.doc("/note/noteData/noteList/");
-        // let data
-        // data = await noteRef.get();
-
-        // if (data.exists){
-        //   console.log("데이터는 ? ", data.data());
-        // }else{
-        //   console.log("데이터가없어?");
-        // }
-
-        // const noteRef = db.collection('note');
-        let data
-        data = await db.collection("note").get();
-        let noteData = [];
-        data.forEach(doc => {
-          noteData.push(doc.data());
-          console.log(doc.id, " => " , doc.data());
+        this.items == undefined
+          ? await this.createNote({
+              title: this.title,
+              content: this.content
+            })
+          : await this.updateNote({
+              item : this.items,
+              title: this.title,
+              content: this.content,
+              noteId: this.items.noteId
+            });
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
         });
-        console.log(noteData,"노트데이터")
-        // .then(function(querySnapshot) {
-        //     querySnapshot.forEach(function(doc) {
-        //         // doc.data() is never undefined for query doc snapshots
-        //         console.log(doc.id, " => ", doc.data());
-        //     });
-        // })
-        // .catch(function(error) {
-        //     console.log("Error getting documents: ", error);
-        // });
+        //this.setState({ isLoading: false });
+      }  
+      
+    },
+    back() {
+      router.replace("/notelist");
+    },
+    async createNote(note) {
+      try {
+        this.db.collection("note").add({
+        title: note.title, content: note.content, uid: this.user.user.uid,
+        capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
+        name: this.user.user.displayName,
+        sort: firebase.firestore.FieldValue.serverTimestamp()});
 
-        // 노트 샘플데이터
-        // noteRef.doc().set({
-        //     title: "San Francisco", content: "1번내용", uid: this.user.user.uid,
-        //     capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        //     name: "popuyaha",
-        //     regions: ["west_coast", "norcal"],
-        //     sort: firebase.firestore.FieldValue.serverTimestamp()});
-        // noteRef.doc().set({
-        //     title: "San Francisco", content: "2번내용", uid: this.user.user.uid,
-        //     capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        //     name: "nlknlk0",
-        //     regions: ["west_coast", "socal"], 
-        //     sort: firebase.firestore.FieldValue.serverTimestamp()});
-        // noteRef.doc().set({
-        //     title: "San Francisco", content: "3번내용", uid: this.user.user.uid,
-        //     capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        //     name: "nlnlk2",
-        //     regions: ["east_coast"], 
-        //     sort: firebase.firestore.FieldValue.serverTimestamp()});
-        // noteRef.doc().set({
-        //     title: "San Francisco", content: "4번내용", uid: this.user.user.uid,
-        //     capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        //     name: "popuyaha",
-        //     regions: ["kanto", "honshu"], 
-        //     sort: firebase.firestore.FieldValue.serverTimestamp()});
-        // noteRef.doc().set({
-        //     title: "San Francisco", content: "5번내용", uid: this.user.user.uid,
-        //     capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        //     name: "popuyaha",
-        //     regions: ["jingjinji", "hebei"], 
-        //     sort: firebase.firestore.FieldValue.serverTimestamp()});
-        // noteRef.doc().set({
-        //     title: "San Francisco", content: "6번내용", uid: this.user.user.uid,
-        //     capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        //     name: "popuyaha",
-        //     regions: ["jingjinji", "hebei"], 
-        //     sort: firebase.firestore.FieldValue.serverTimestamp()});
-        // noteRef.doc().set({
-        //     title: "San Francisco", content: "7번내용", uid: this.user.user.uid,
-        //     capital: false, created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        //     name: "popuyaha",
-        //     regions: ["jingjinji", "hebei"], 
-        //     sort: firebase.firestore.FieldValue.serverTimestamp()});
+        router.replace("/notelist");
       } catch (e) {
         this.$alert("error =", e).then(() => {
           return;
@@ -165,38 +118,25 @@ export default {
         //this.setState({ isLoading: false });
       }
     },
-    back() {
-      router.replace("/notelist");
-    },
-    createNote(note) {
-      console.log(note,"note");
-      // return API.post("notes", "notes", {
-      //   body: note
-      // })
-      //   .then(response => {
-      //     router.replace("/notelist");
-      //     return response;
-      //   })
-      //   .catch(error =>
-      //     this.$alert("error =", error).then(() => {
-      //       return;
-      //     })
-      //   );
-    },
-    updateNote(note) {
-      console.log(note,"note");
-      // return API.put("notes", "notes/" + note.noteId, {
-      //   body: note
-      // })
-      //   .then(response => {
-      //     router.replace("/notelist");
-      //     return response;
-      //   })
-      //   .catch(error =>
-      //     this.$alert("error =", error).then(() => {
-      //       return;
-      //     })
-      //   );
+    async updateNote(note) {
+      try {
+        let data
+        let id = ''
+        data = await this.db.collection("note").where("sort","==",this.items.sort).get();
+        data.forEach(doc => {
+          id = doc.id
+        });
+        await this.db.collection("note").doc(id).update({
+          title : note.title,
+          content : note.content
+        });
+        router.replace("/notelist");
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
+        });
+        //this.setState({ isLoading: false });
+      }
     }
     // check(file) {
     //   //console.log(file, "체크");

@@ -1,6 +1,6 @@
 <template>
   <div class="comment-create">
-    <b-input-group :prepend="this.user.attributes.name" class="mt-3">
+    <b-input-group :prepend="this.user.user.displayName" class="mt-3">
       <b-form-textarea
         id="textarea"
         v-model="context"
@@ -21,7 +21,8 @@
 import Vue from "vue";
 import { mapState } from "vuex";
 //import CommentCreate from "./CommentCreate";
-// import API from "@aws-amplify/api";
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 import Alert from "@/components/auth/Alert.vue";
 // import router from "@/router";
 
@@ -38,12 +39,13 @@ export default {
     commentId: String,
     content: Object,
     noteId: String,
-    datas: Object
+    datas: Object,
   },
   data() {
     return {
       name: "",
-      context: ""
+      context: "",
+      db: firebase.firestore()
     };
   },
   computed: {
@@ -54,30 +56,36 @@ export default {
   },
   methods: {
     async createSubComment() {
-      await this.createComment2({
-        context: this.context,
-        username: this.user.username,
-        name: this.user.attributes.name,
-        key_comment_id: this.content.commentId,
-        flag: true
-      });
+      try {
+        let list
+        let id = ''
+        
+        list = await this.db.collection("board").doc(this.noteId).collection("reply").where("sort","==",this.content.sort).get();
+        list.forEach(doc => {
+          id = doc.id;
+        });
+        try {
+          await this.db.collection("board").doc(this.noteId).collection("reply").doc(id).collection("rereply").add({
+          content: this.context, uid: this.user.user.uid,
+          name: this.user.user.displayName,
+          sort: firebase.firestore.FieldValue.serverTimestamp()});
+          this.context = "";
+          this.subCommentToggle();
+          this.reloadSubSubComments();
+        } catch (error) {
+          this.$alert("error =", error).then(() => {
+          return;
+        });
+        }
+        
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
+        });
+        //this.setState({ isLoading: false });
+      }
     },
-    createComment2(data) {
-      console.log(data,"data");
-      // return API.post("reply", "reply", {
-      //   body: data
-      // })
-      //   .then(response => {
-      //     this.reloadSubSubComments();
-      //     this.subCommentToggle();
-      //     return response;
-      //   })
-      //   .catch(error =>
-      //     this.$alert("error =", error).then(() => {
-      //       return;
-      //     })
-      //   );
-    }
+    
   }
 };
 </script>

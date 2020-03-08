@@ -20,7 +20,7 @@
       </b-card-text>
 
       <b-button href="#" variant="primary" @click="updateNote(item)" style="margin:5px">수정하기</b-button>
-      <b-button href="#" variant="primary" @click="deleteNote(item)" style="margin:5px">삭제하기</b-button>
+      <b-button href="#" variant="primary" @click="deleteNoteConfirm(item)" style="margin:5px">삭제하기</b-button>
     </b-card>
     <b-button variant="primary" style="margin:10px" class="btn pull-right" @click="newNote">글쓰기</b-button>
   </div>
@@ -42,7 +42,8 @@ Vue.use(VueSimpleAlert, VueMomentJS, moment);
 export default {
   data() {
     return {
-      datas: []
+      datas: [],
+      db : firebase.firestore()
       //attachmentURL : '',
       //attachment: [],
       //file: null
@@ -55,36 +56,15 @@ export default {
     })
   },
   async created() {
-    //this.getNoteList();
-    var db = firebase.firestore();
-    let data
-    data = await db.collection("note").get();
-    let noteData = [];
-    data.forEach(doc => {
-      noteData.push(doc.data());
-      // console.log(doc.id, " => " , doc.data());
-    });
-    console.log(noteData,"노트데이터")
-    this.datas = noteData;
+    this.getNoteList();
   },
   methods: {
     newNote() {
       router.push("notelist/newnote");
     },
-    deleteNote(item) {
-      console.log(item,"item");
+    async deleteNoteConfirm(item) {
       this.$confirm("정말 삭제하시겠습니까?").then(() => {
-        // return API.del("notes", "notes/" + item.noteId)
-        //   .then(response => {
-        //     this.getNoteList();
-        //     //router.replace('/notelist')
-        //     return response;
-        //   })
-        //   .catch(error =>
-        //     this.$alert("error =", error).then(() => {
-        //       return;
-        //     })
-        //   );
+        return this.deleteNote(item);
       });
     },
     updateNote(item) {
@@ -93,16 +73,39 @@ export default {
     dateFmt(date) {
       return moment(date).format("YYYY년 MM월 DD일");
     },
-    getNoteList() {
-      // return API.get("notes", "notes")
-      //   .then(resData => {
-      //     this.datas = resData;
-      //   })
-      //   .catch(err => {
-      //     this.$alert("error =", err).then(() => {
-      //       return;
-      //     });
-      //   });
+    async deleteNote(note) {
+      try {  
+        let data
+        let id = ''  
+        data = await this.db.collection("note").where("sort","==",note.sort).get();
+        data.forEach(doc => {
+          id = doc.id
+        });
+        try{
+          await this.db.collection("note").doc(id).delete();
+          this.getNoteList();
+        }catch(e){
+          console.error(e,"삭제 오류");
+        }
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
+        });
+        //this.setState({ isLoading: false });
+      }
+    },
+    async getNoteList(){
+      let data
+      try {
+        data = await this.db.collection("note").where("uid","==",this.user.user.uid).get();
+        let noteData = [];
+        data.forEach(doc => {
+          noteData.push(doc.data());
+        });
+        this.datas = noteData;  
+      } catch (error) {
+        console.error(error,"error");
+      }
     }
   }
 };

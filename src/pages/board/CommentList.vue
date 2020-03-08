@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-bind:key="data.commentId" v-for="data in replyDatas">
-      <CommentListItem :commentObj="data" :reloadComment="reloadComment" />
+    <div v-bind:key="data.sort" v-for="data in this.datas">
+      <CommentListItem :commentObj="data" :noteId="noteId" :reloadComment="reloadComment" />
     </div>
     <CommentCreate v-bind:noteId="noteId" :reloadComment="reloadComment" />
   </div>
@@ -9,6 +9,8 @@
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 import CommentCreate from "./CommentCreate";
 import CommentListItem from "./CommentListItem";
 // import API from "@aws-amplify/api";
@@ -21,7 +23,8 @@ export default {
   name: "CommentList",
   data() {
     return {
-      datas: []
+      datas: [],
+      db: firebase.firestore()
       // comments = datas.
     };
   },
@@ -33,42 +36,30 @@ export default {
       user: state => state.auth.user,
       isAuthenticated: state => state.auth.isAuthenticated
     }),
-    //글의 Id에 달린 댓글만 필터링
-    replyDatas: function() {
-      return this.datas.filter(
-        data => data.noteId === this.noteId && data.subcomment_id == null
-      );
-    }
   },
-  async created() {
-    // return API.get("reply", "reply")
-    //   .then(resData => {
-    //     this.datas = resData;
-    //   })
-    //   .catch(err => {
-    //     this.$alert("error =", err).then(() => {
-    //       return;
-    //     });
-    //   });
+  created() {
+    
+    this.commentList();
   },
   components: {
     CommentCreate,
     CommentListItem
   },
   methods: {
-    commentList(note) {
-      console.log(note,"note");
-      // return API.get("reply", "reply", {
-      //   body: note
-      // })
-      //   .then(resData => {
-      //     this.datas = resData;
-      //   })
-      //   .catch(err => {
-      //     this.$alert("error =", err).then(() => {
-      //       return;
-      //     });
-      //   });
+    async commentList() {
+      try {
+        this.datas = [];
+        let data
+        data = await this.db.collection("board").doc(this.noteId).collection("reply").get();
+        data.forEach(doc => {
+          this.datas.push(doc.data());
+        });
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
+        });
+        //this.setState({ isLoading: false });
+      }
     },
 
     reloadComment() {

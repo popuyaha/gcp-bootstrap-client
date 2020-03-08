@@ -1,9 +1,9 @@
 <template>
   <div class="comment-create">
-    <b-input-group :prepend="this.user.attributes.name" class="mt-3">
+    <b-input-group :prepend="this.user.user.displayName" class="mt-3">
       <b-form-textarea
         id="textarea"
-        v-model="context"
+        v-model="content"
         :placeholder="
           isSubComment ? '덧글에 덧글을 달아주세요~!' : '코멘트를 달아주세요~!'
         "
@@ -20,6 +20,8 @@
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
+import * as firebase from "firebase/app";
+import "firebase/firestore";
 //import CommentCreate from "./CommentCreate";
 // import API from "@aws-amplify/api";
 import Alert from "@/components/auth/Alert.vue";
@@ -42,8 +44,9 @@ export default {
   data() {
     return {
       name: "",
-      context: "",
-      subNoteId: ""
+      content: "",
+      subNoteId: "",
+      db: firebase.firestore()
     };
   },
   mounted() {
@@ -57,30 +60,20 @@ export default {
   },
   methods: {
     async createComment() {
-      await this.createComment2({
-        context: this.context,
-        username: this.user.username,
-        noteId: this.noteId,
-        name: this.user.attributes.name,
-        flag: false
-      });
+      try {
+        this.db.collection("board").doc(this.noteId).collection("reply").add({
+        content: this.content, uid: this.user.user.uid,
+        name: this.user.user.displayName,
+        sort: firebase.firestore.FieldValue.serverTimestamp()});
+        this.content = "";
+        this.reloadComment();
+      } catch (e) {
+        this.$alert("error =", e).then(() => {
+          return;
+        });
+        //this.setState({ isLoading: false });
+      }
     },
-    createComment2(board) {
-      console.log(board,"board");
-      // return API.post("reply", "reply", {
-      //   body: board
-      // })
-      //   .then(response => {
-      //     this.context = "";
-      //     this.reloadComment();
-      //     return response;
-      //   })
-      //   .catch(error =>
-      //     this.$alert("error =", error).then(() => {
-      //       return;
-      //     })
-      //   );
-    }
   }
   
 };
