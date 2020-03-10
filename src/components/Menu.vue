@@ -19,9 +19,9 @@
           }}</strong>
         </template>
         <b-row class="justify-content-md-center" style="margin:5px">
-          <b-dropdown-item to="/changePassword"
+          <!-- <b-dropdown-item to="/changePassword"
             ><span class="nav-username">비밀번호 변경</span></b-dropdown-item
-          >
+          > -->
           <b-dropdown-item to="/signOut"
             ><v-icon name="sign-out-alt" /><span class="nav-username"
               >로그아웃</span
