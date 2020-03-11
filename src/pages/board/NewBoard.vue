@@ -1,6 +1,8 @@
 <template>
   <div class="NewBoard col-sm-offset-2 col-sm-5 col-md-8" style="margin:5px">
-    <h2 style="margin:10px">{{ items !== undefined ? "글 수정하기" : "글 등록하기" }}</h2>
+    <h2 style="margin:10px">
+      {{ items !== undefined ? "글 수정하기" : "글 등록하기" }}
+    </h2>
     <b-form-input
       id="title"
       v-model="title"
@@ -23,13 +25,15 @@
         @click="newBoard"
         class="col-md-offset-11 col-md-1"
         style="margin:5px"
-      >{{ items !== undefined ? "수정" : "등록" }}</b-button>
+        >{{ items !== undefined ? "수정" : "등록" }}</b-button
+      >
       <b-button
         variant="primary"
         @click="back"
         class="col-md-offset-11 col-md-1"
         style="margin:5px"
-      >취소</b-button>
+        >취소</b-button
+      >
     </div>
     <!-- <pre class="mt-3 mb-0">{{ text }}</pre> -->
   </div>
@@ -40,6 +44,12 @@ import router from "@/router";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 import { mapState } from "vuex";
+// import * as cors from 'cors';
+
+// const firebase = require("firebase");
+// Required for side-effects
+require("firebase/functions");
+// const cors = require('cors')({origin: true});
 
 export default {
   data() {
@@ -94,23 +104,32 @@ export default {
       }
     },
     async createBoard(board) {
-      try {
-        this.db.collection("board").add({
-          title: board.title,
-          content: board.content,
-          uid: this.user.user.uid,
-          name: this.user.user.displayName,
-          sort: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        this.$nextTick(function() {
-          router.replace("/board");
-        });
-      } catch (e) {
-        this.$alert("error =", e).then(() => {
-          return;
-        });
-        //this.setState({ isLoading: false });
-      }
+      // console.log(`데이터는 ${board}`);
+      console.log(board,"아녀?")
+      let messageText = board.content;
+      var addMessage = firebase.functions().httpsCallable("addMessage");
+      addMessage({ text: messageText }).then(function(result) {
+        // Read result of the Cloud Function.
+        var sanitizedMessage = result.data.text;
+        console.log(sanitizedMessage, "메세진");
+      });
+      // try {
+      //   this.db.collection("board").add({
+      //     title: board.title,
+      //     content: board.content,
+      //     uid: this.user.user.uid,
+      //     name: this.user.user.displayName,
+      //     sort: firebase.firestore.FieldValue.serverTimestamp()
+      //   });
+      //   this.$nextTick(function() {
+      //     router.replace("/board");
+      //   });
+      // } catch (e) {
+      //   this.$alert("error =", e).then(() => {
+      //     return;
+      //   });
+      //   //this.setState({ isLoading: false });
+      // }
     },
     async updateBoard(board) {
       try {
