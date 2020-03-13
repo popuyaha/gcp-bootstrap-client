@@ -44,6 +44,7 @@ import router from "@/router";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 import { mapState } from "vuex";
+import message from "@/functions";
 // import * as cors from 'cors';
 
 // const firebase = require("firebase");
@@ -105,14 +106,19 @@ export default {
     },
     async createBoard(board) {
       // console.log(`데이터는 ${board}`);
-      console.log(board,"아녀?")
-      let messageText = board.content;
-      var addMessage = firebase.functions().httpsCallable("addMessage");
-      addMessage({ text: messageText }).then(function(result) {
+      message.addMessage({ text: messageText }).then(function(result) {
         // Read result of the Cloud Function.
         var sanitizedMessage = result.data.text;
         console.log(sanitizedMessage, "메세진");
       });
+      console.log(board,"아녀?")
+      let messageText = board.content;
+      // var addMessage = firebase.functions().httpsCallable("addMessage");
+      // addMessage({ text: messageText }).then(function(result) {
+      //   // Read result of the Cloud Function.
+      //   var sanitizedMessage = result.data.text;
+      //   console.log(sanitizedMessage, "메세진");
+      // });
       // try {
       //   this.db.collection("board").add({
       //     title: board.title,

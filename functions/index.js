@@ -64,19 +64,7 @@ exports.addMessage = functions.https.onCall((data, context) => {
     throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
         'while authenticated.');
   }
-  // [END messageHttpsErrors]
-
-  // [START authIntegration]
-  // Authentication / user information is automatically added to the request.
-//   const uid = context.auth.uid;
-//   const name = context.auth.token.name || null;
-//   const picture = context.auth.token.picture || null;
-//   const email = context.auth.token.email || null;
-  // [END authIntegration]
-
-  // [START returnMessageAsync]
-  // Saving the new message to the Realtime Database.
-  //const sanitizedMessage = sanitizer.sanitizeText(text); // Sanitize the message.
+  
   console.log(data,"data");
   console.log(context,"context");
   return admin.database().ref('/messages').push({
