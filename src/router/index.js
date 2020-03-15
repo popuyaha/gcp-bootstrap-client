@@ -10,6 +10,7 @@ import PasswordReset from "@/pages/auth/PasswordReset.vue";
 import ChangePassword from "@/pages/auth/ChangePassword.vue";
 import ConfirmPasswordReset from "@/pages/auth/ConfirmPasswordReset.vue";
 import Board from "@/pages/board/Board.vue";
+import Image from "@/pages/test/Image.vue";
 import Note from "@/pages/note/NoteList.vue";
 import NewNote from "@/pages/note/NewNote.vue";
 import NewBoard from "@/pages/board/NewBoard.vue";
@@ -25,6 +26,12 @@ const routes = [
     name: "home",
     component: Home,
     meta: { title: "Home", auth: false }
+  },
+  {
+    path: "/image",
+    name: "image",
+    component: Image,
+    meta: { title: "Image", auth: true }
   },
   {
     path: "/dashboard",

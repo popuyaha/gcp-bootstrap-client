@@ -7,6 +7,7 @@
       <b-nav-item to="/dashboard">Dashboard</b-nav-item>
       <b-nav-item to="/board">Board</b-nav-item>
       <b-nav-item to="/notelist">Note</b-nav-item>
+      <b-nav-item to="/image">Test</b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto">
       <b-nav-item v-if="!isAuthenticated" class="nav-btn" to="/signIn"
