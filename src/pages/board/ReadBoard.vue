@@ -15,7 +15,20 @@
           >등록일: {{ dateFmt(this.items.created_at) }}</div>
         </div>
       </div>
-      <div class="content-detail-content" style="white-space:pre;">{{ this.items.content }}</div>
+      <div>
+        <viewer
+        v-model="this.items.content"
+        :options="editorOptions"
+        :html="editorHtml"
+        :visible="editorVisible"
+        previewStyle="vertical"
+        height="500px"
+        mode="markdown"    
+       />
+
+      </div>
+       
+      <!-- <div class="content-detail-content" style="white-space:pre;">{{ this.items.content }}</div> -->
       <div class="content-detail-button" align="right">
         <b-button variant="primary" style="margin:5px" @click="updateData(items)">수정</b-button>
         <b-button variant="success" style="margin:5px" @click="deleteDataConfirm">삭제</b-button>
@@ -38,16 +51,29 @@ import CommentList from "./CommentList";
 import VueSimpleAlert from "vue-simple-alert";
 import moment from "moment";
 import VueMomentJS from "vue-momentjs";
+import 'tui-editor/dist/tui-editor-contents.css';
+import 'highlight.js/styles/github.css';
+import { Viewer } from '@toast-ui/vue-editor'
 
 Vue.component("v-alert", Alert);
 Vue.use(VueSimpleAlert, VueMomentJS, moment);
 
 export default {
+  components: {
+    CommentList,
+    'viewer': Viewer
+  },
   data() {
     const item = this.$route.query.noteId;
     return {
+      editorOptions: {
+          hideModeSwitch: true
+      },
+      editorHtml: '',
+      editorVisible: true,
       item: item,
       items: this.items,
+      content:"dd",
       db: firebase.firestore()
     };
   },
@@ -132,9 +158,7 @@ export default {
       }
     }
   },
-  components: {
-    CommentList
-  }
+  
 };
 </script>
 <style scoped>

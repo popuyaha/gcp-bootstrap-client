@@ -12,13 +12,15 @@
       style="margin:1px"
     ></b-form-input>
 
-    <b-form-textarea
-      id="textarea"
+    <editor
       v-model="content"
-      placeholder="Enter something..."
-      rows="6"
-      max-rows="9"
-    ></b-form-textarea>
+      :options="editorOptions"
+      :html="editorHtml"
+      :visible="editorVisible"
+      previewStyle="vertical"
+      height="500px"
+      mode="markdown"  
+      />
     <div align="right">
       <b-button
         variant="primary"
@@ -34,7 +36,7 @@
         style="margin:5px"
         >취소</b-button
       >
-      <img id="myimg" src="">
+      
     </div>
     <!-- <pre class="mt-3 mb-0">{{ text }}</pre> -->
   </div>
@@ -45,6 +47,11 @@ import router from "@/router";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 import { mapState } from "vuex";
+import 'tui-editor/dist/tui-editor.css';
+import 'tui-editor/dist/tui-editor-contents.css';
+import 'codemirror/lib/codemirror.css';
+import { Editor } from '@toast-ui/vue-editor'
+
 // import boardFunctions from "@/functions/index.js";
 // import * as cors from 'cors';
 
@@ -52,11 +59,18 @@ import { mapState } from "vuex";
 // Required for side-effects
 // const boardFunctions = require("firebase/functions");
 // const cors = require('cors')({origin: true});
-
 export default {
+  components:{
+    'editor': Editor
+  },
   data() {
     const items = this.$route.params.item;
     return {
+      editorOptions: {
+          hideModeSwitch: true
+      },
+      editorHtml: '',
+      editorVisible: true,
       items: items,
       title: items !== undefined ? items.title : "",
       content: items !== undefined ? items.content : "",
@@ -68,6 +82,10 @@ export default {
       user: state => state.auth.user,
       isAuthenticated: state => state.auth.isAuthenticated
     })
+  },
+  created: { 
+    
+  
   },
   methods: {
     async newBoard() {
@@ -126,6 +144,7 @@ export default {
     },
     async updateBoard(board) {
       try {
+        console.log(board,"보드")
         let data;
         let id = "";
         data = await this.db
