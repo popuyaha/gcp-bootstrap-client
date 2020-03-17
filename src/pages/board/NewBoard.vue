@@ -67,7 +67,44 @@ export default {
     const items = this.$route.params.item;
     return {
       editorOptions: {
-          hideModeSwitch: true
+          hideModeSwitch: true,
+          hooks:{
+            'addImageBlobHook': function(file, callback) {
+              console.log(file,"블롭으로 들어오나?")
+              console.log(callback,"콜백")
+              var storage = firebase.storage();
+              // Create a storage reference from our storage service
+              var storageRef = storage.ref();
+              storageRef.child('image/2020-02-29_400x400.png').getDownloadURL().then(function(url) {
+              // `url` is the download URL for 'images/stars.jpg'
+
+              // Or inserted into an <img> element:
+              console.log(url,"url")
+              callback(url,file.name)
+              }).catch(function(error) {
+            switch (error.code) {
+                case 'storage/object-not-found':
+                // File doesn't exist
+                break;
+
+                case 'storage/unauthorized':
+                // User doesn't have permission to access the object
+                break;
+
+                case 'storage/canceled':
+                // User canceled the upload
+                break;
+
+                case 'storage/unknown':
+                // Unknown error occurred, inspect the server response
+                break;
+            }
+            })
+              
+            //run callback
+            //callback('Image URL');
+        }
+          }
       },
       editorHtml: '',
       editorVisible: true,
