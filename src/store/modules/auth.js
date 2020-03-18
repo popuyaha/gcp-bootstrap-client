@@ -1,10 +1,3 @@
-// import Auth from "@aws-amplify/auth";
-// import Amplify from "@aws-amplify/core";
-// import db from '../firestore'
-
-// const Logger = Amplify.Logger;
-// Logger.LOG_LEVEL = "DEBUG"; // to show detailed logs from Amplify library
-// const logger = new Logger("store:auth");
 import * as firebase from "firebase/app";
 
 // Add the Firebase services that you want to use
@@ -58,7 +51,7 @@ const actions = {
   clearAuthenticationStatus: context => {
     context.commit("clearAuthenticationStatus", null);
   },
-  signIn: async (context, params) => {
+  async signIn(context, params) {
     // logger.debug("{}로 회원가입", params.username);
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
@@ -66,7 +59,7 @@ const actions = {
         .auth()
         .signInWithEmailAndPassword(params.email, params.password);
       if (user.user.emailVerified) {
-        firebase.auth().onAuthStateChanged(function (user) {
+        firebase.auth().onAuthStateChanged(function(user) {
           if (user) {
             // User is signed in.
           } else {
@@ -82,14 +75,14 @@ const actions = {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
-  signOut: async context => {
+  async signOut(context) {
     firebase
       .auth()
       .signOut()
-      .then(function () {
+      .then(function() {
         // Sign-out successful.
       })
-      .catch(function (error) {
+      .catch(function(error) {
         // An error happened.
         this.$alert("error =", error).then(() => {
           return;
@@ -97,7 +90,7 @@ const actions = {
       });
     context.commit("auth/clearAuthentication", null, { root: true });
   },
-  signUp: async (context, params) => {
+  async signUp(context, params) {
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     var user = null;
     try {
@@ -107,11 +100,11 @@ const actions = {
           params.attributes.email,
           params.password
         )
-        .then(function () {
+        .then(function() {
           user = firebase.auth().currentUser;
           user.sendEmailVerification();
         })
-        .then(function () {
+        .then(function() {
           user.updateProfile({
             displayName: params.username
             // photoURL: photoURL
@@ -128,7 +121,42 @@ const actions = {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
-  // confirmSignUp: async (context, params) => {
+  async googleSignIn(context, params) {
+    context.commit("auth/clearAuthenticationStatus", null, { root: true });
+    console.log(context, params, "이리로");
+    try {
+      var provider = new firebase.auth.GoogleAuthProvider();
+      await firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(function(result) {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          console.log(`토큰 : ${token} 유저 : ${user.displayName}`);
+          // ...
+          context.commit("setUserAuthenticated", user);
+        })
+        .catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          console.log(
+            `errorCode : ${errorCode} errorMessage : ${errorMessage}`
+          );
+          console.log(`email : ${email} credential : ${credential}`);
+          // ...
+        });
+    } catch (err) {
+      context.commit("auth/setAuthenticationError", err, { root: true });
+    }
+  },
+  //async confirmSignUp(context, params) {
   //   // logger.debug("{}로 로그인 승인", params.username);
   //   context.commit("auth/clearAuthenticationStatus", null, { root: true });
   //   try {
@@ -145,16 +173,16 @@ const actions = {
   //     context.commit("auth/setAuthenticationError", err, { root: true });
   //   }
   // },
-  passwordReset: async (context, params) => {
+  async passwordReset(context, params) {
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       firebase
         .auth()
         .sendPasswordResetEmail(params.email)
-        .then(function () {
+        .then(function() {
           // Email sent.
         })
-        .catch(function (error) {
+        .catch(function(error) {
           context.commit("auth/setAuthenticationError", error, { root: true });
           // An error happened.
         });
@@ -163,7 +191,7 @@ const actions = {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
   },
-  // confirmPasswordReset: async (context, params) => {
+  //async confirmPasswordReset(context, params) {
   //   context.commit("auth/clearAuthenticationStatus", null, { root: true });
   //   try {
   //     // await Auth.forgotPasswordSubmit(
@@ -175,24 +203,24 @@ const actions = {
   //     context.commit("auth/setAuthenticationError", err, { root: true });
   //   }
   // },
-  passwordResetResend: async (context, params) => {
+  async passwordResetResend(context, params) {
     context.commit("auth/clearAuthenticationStatus", null, { root: true });
     try {
       firebase
         .auth()
         .sendPasswordResetEmail(params.email)
-        .then(function () {
+        .then(function() {
           // Email sent.
         })
-        .catch(function (error) {
+        .catch(function(error) {
           context.commit("auth/setAuthenticationError", error, { root: true });
           // An error happened.
         });
     } catch (err) {
       context.commit("auth/setAuthenticationError", err, { root: true });
     }
-  },
-  // passwordChange: async (context, params) => {
+  }
+  //async passwordChange(context, params) {
   //   // logger.debug("{}의 비밀번호 변경", context.state.user.username);
   //   context.commit("auth/clearAuthenticationStatus", null, { root: true });
   //   try {
@@ -200,7 +228,7 @@ const actions = {
   //     var newPassword = getASecureRandomPassword();
   //     var oldPassword = params.password
   //     user.updatePassword(newPassword).then(function() {
-        
+
   //       // Update successful.
   //     }).catch(function(error) {
   //       this.$alert("비밀번호 변경 에러 =", error).then(() => {

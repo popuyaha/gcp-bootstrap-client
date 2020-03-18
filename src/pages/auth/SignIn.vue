@@ -25,6 +25,10 @@
               />
             </b-form-group>
             <b-button type="submit" variant="primary">로그인</b-button>
+            
+          </b-form>
+          <b-form @submit.prevent="googleSignIn">
+            <b-button type="submit" variant="primary">Google 로그인</b-button>
           </b-form>
         </div>
       </b-col>
@@ -75,6 +79,18 @@ export default {
       if (!this.hasAuthenticationStatus) {
         router.push("dashboard");
       }
+    },
+    async googleSignIn() {
+      console.log("통한다");
+      await store.dispatch("auth/googleSignIn", {
+        email: this.email,
+        password: this.pass
+      });
+
+      if (!this.hasAuthenticationStatus) {
+        router.push("dashboard");
+      }
+
     }
   }
 };

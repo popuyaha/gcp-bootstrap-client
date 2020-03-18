@@ -125,7 +125,7 @@ export default {
   
   },
   methods: {
-    async newBoard() {
+    newBoard() {
       try {
         this.items == undefined
           ? this.createBoard({
