@@ -18,16 +18,12 @@
 </template>
 
 <script>
-import Vue from "vue";
 import { mapState } from "vuex";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 //import CommentCreate from "./CommentCreate";
 // import API from "@aws-amplify/api";
-import Alert from "@/components/auth/Alert.vue";
 // import router from "@/router";
-
-Vue.component("v-alert", Alert);
 
 export default {
   name: "CommentCreate",
@@ -74,9 +70,7 @@ export default {
         this.content = "";
         this.reloadComment();
       } catch (e) {
-        this.$alert("error =", e).then(() => {
-          return;
-        });
+        console.error(e,"경고로 바꿔야함")
         //this.setState({ isLoading: false });
       }
     }
